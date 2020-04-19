@@ -46,8 +46,12 @@ class BoardState:
     def initial_state() -> 'BoardState':
         board = np.zeros(shape=(8, 8), dtype=np.int8)
 
-        board[7, 0] = 1  # шашка первого игрока
-        board[6, 1] = 2  # дамка первого игрока
-        board[0, 1] = -1  # шашка противника
+        for i in range(8):
+            for j in range(8):
+                if (i + j) % 2: # black cell
+                    if i >= 5: # first player
+                        board[i, j] = 1
+                    elif i < 3: # second player
+                        board[i, j] = -1
 
         return BoardState(board, 1)
