@@ -62,15 +62,15 @@ class BoardState:
         return result
 
     def get_possible_moves(self) -> List['BoardState']:
-        return [] # todo
-
-    @property
-    def is_game_finished(self) -> bool:
-        ... # todo
-
-    @property
-    def get_winner(self) -> Optional[int]:
-        ... # todo
+        new_states = []
+        for from_x in range(8):
+            for from_y in range(8):
+                for to_x in range(8):
+                    for to_y in range(8):
+                        state = self.do_move(from_x, from_y, to_x, to_y)
+                        if state != None:
+                            new_states += [state]
+        return new_states
 
     @staticmethod
     def initial_state() -> 'BoardState':
