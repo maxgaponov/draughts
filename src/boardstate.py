@@ -55,6 +55,9 @@ class BoardState:
 
         result = self.copy()
         result.board[to_y, to_x] = result.board[from_y, from_x]
+        if abs(result.board[to_y, to_x]) == 1:
+            if (self.current_player == 1 and to_y == 0) or (self.current_player == -1 and to_y == 7):
+                result.board[to_y, to_x] *= 2
         result.board[from_y, from_x] = 0
         if enemy_piece_cnt == 1:
             result.board[enemy_y, enemy_x] = 0
@@ -65,6 +68,8 @@ class BoardState:
         new_states = []
         for from_x in range(8):
             for from_y in range(8):
+                if self.board[from_y, from_x] != self.current_player:
+                    continue
                 for to_x in range(8):
                     for to_y in range(8):
                         state = self.do_move(from_x, from_y, to_x, to_y)

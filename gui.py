@@ -66,7 +66,7 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
 pygame.init()
 
 screen: Surface = pygame.display.set_mode([512, 512])
-ai = AI(PositionEvaluation(), search_depth=1)
+ai = AI(PositionEvaluation(), search_depth=2)
 
 game_loop(screen, BoardState.initial_state(), ai)
 
