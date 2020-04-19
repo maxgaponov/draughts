@@ -7,9 +7,6 @@ class BoardState:
         self.board: np.ndarray = board
         self.current_player: int = current_player
 
-    def inverted(self) -> 'BoardState':
-        return BoardState(board=self.board[::-1, ::-1] * -1, current_player=self.current_player * -1)
-
     def copy(self) -> 'BoardState':
         return BoardState(self.board.copy(), self.current_player)
 
@@ -17,18 +14,51 @@ class BoardState:
         """
         :return: new BoardState or None for invalid move
         """
-        if from_x == to_x and from_y == to_y:
-            return None #invalid move
+        dx = to_x - from_x
+        dy = to_y - from_y
 
-        if (to_x + to_y) % 2 == 0:
+        if abs(dx) != abs(dy): # not diag. movement
             return None
 
-        # todo more validation here
+        if dx == 0:
+            return None
+
+        if self.board[from_y, from_x] * self.current_player <= 0: # invalid player
+            return None
+
+        if self.board[to_y, to_x] != 0: # occupied cell
+            return None
+
+        is_king = (abs(self.board[from_y, from_x]) == 2)
+
+        (enemy_y, enemy_x) = (-1, -1)
+        enemy_piece_cnt = 0
+        for i in range(1, abs(dx)):
+            y = from_y + i * np.sign(dy)
+            x = from_x + i * np.sign(dx)
+            cell_owner = np.sign(self.board[y, x])
+            if cell_owner == self.current_player: # moved over itself piece
+                return None
+            elif cell_owner == -self.current_player:
+                enemy_piece_cnt += 1
+                (enemy_y, enemy_x) = (y, x)
+        if enemy_piece_cnt > 1:
+            return None
+
+        if not is_king:
+            if enemy_piece_cnt == 0:
+                if dy != -self.current_player: # moved to incorrect direction
+                    return None
+            else:
+                if abs(dx) != 2:
+                    return None
 
         result = self.copy()
         result.board[to_y, to_x] = result.board[from_y, from_x]
         result.board[from_y, from_x] = 0
-
+        if enemy_piece_cnt == 1:
+            result.board[enemy_y, enemy_x] = 0
+        result.current_player *= -1
         return result
 
     def get_possible_moves(self) -> List['BoardState']:
