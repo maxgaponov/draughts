@@ -29,7 +29,7 @@ class AI:
         best_score = None
         best_move = None
         for move in moves:
-            (move, score) = self.get_best_move_and_score(move, search_depth=search_depth - 1)
+            score = self.get_best_move_and_score(move, search_depth=search_depth - 1)[1]
             score *= -1
             if best_move is None or best_score < score:
                 best_score = score
