@@ -17,16 +17,16 @@ class BoardState:
         dx = to_x - from_x
         dy = to_y - from_y
 
-        if abs(dx) != abs(dy): # not diag. movement
+        if abs(dx) != abs(dy):  # not diag. movement
             return None
 
         if dx == 0:
             return None
 
-        if self.board[from_y, from_x] * self.current_player <= 0: # invalid player
+        if self.board[from_y, from_x] * self.current_player <= 0:  # invalid player
             return None
 
-        if self.board[to_y, to_x] != 0: # occupied cell
+        if self.board[to_y, to_x] != 0:  # occupied cell
             return None
 
         is_king = (abs(self.board[from_y, from_x]) == 2)
@@ -37,7 +37,7 @@ class BoardState:
             y = from_y + i * np.sign(dy)
             x = from_x + i * np.sign(dx)
             cell_owner = np.sign(self.board[y, x])
-            if cell_owner == self.current_player: # moved over itself piece
+            if cell_owner == self.current_player:  # moved over itself piece
                 return None
             elif cell_owner == -self.current_player:
                 enemy_piece_cnt += 1
@@ -47,7 +47,7 @@ class BoardState:
 
         if not is_king:
             if enemy_piece_cnt == 0:
-                if dy != -self.current_player: # moved to incorrect direction
+                if dy != -self.current_player:  # moved to incorrect direction
                     return None
             else:
                 if abs(dx) != 2:
@@ -68,7 +68,7 @@ class BoardState:
                 for to_x in range(8):
                     for to_y in range(8):
                         state = self.do_move(from_x, from_y, to_x, to_y)
-                        if state != None:
+                        if state is not None:
                             new_states += [state]
         return new_states
 
@@ -78,10 +78,10 @@ class BoardState:
 
         for i in range(8):
             for j in range(8):
-                if (i + j) % 2: # black cell
-                    if i >= 5: # first player
+                if (i + j) % 2:  # black cell
+                    if i >= 5:  # first player
                         board[i, j] = 1
-                    elif i < 3: # second player
+                    elif i < 3:  # second player
                         board[i, j] = -1
 
         return BoardState(board, 1)
