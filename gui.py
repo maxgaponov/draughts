@@ -54,9 +54,6 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
                     board = new_board
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    board = board.inverted()
-
                 if event.key == pygame.K_SPACE:
                     new_board = ai.next_move(board)
                     if new_board is not None:
@@ -69,7 +66,7 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
 pygame.init()
 
 screen: Surface = pygame.display.set_mode([512, 512])
-ai = AI(PositionEvaluation(), search_depth=4)
+ai = AI(PositionEvaluation(), search_depth=1)
 
 game_loop(screen, BoardState.initial_state(), ai)
 
