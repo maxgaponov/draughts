@@ -53,10 +53,6 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
                 if new_board is not None:
                     board = new_board
 
-            if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
-                x, y = [p // grid_size for p in event.pos]
-                board.board[y, x] = (board.board[y, x] + 1 + 2) % 5 - 2  # change figure
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     board = board.inverted()
