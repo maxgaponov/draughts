@@ -6,6 +6,7 @@ from pygame import Surface
 from src.ai import AI, PositionEvaluation
 from src.boardstate import BoardState
 
+CAPTION = 'Draughts'
 
 def draw_board(screen: Surface, pos_x: int, pos_y: int, elem_size: int, board: BoardState):
     dark = (0, 0, 0)
@@ -42,6 +43,13 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
             if event.type == pygame.QUIT:
                 return
 
+            if board.current_player == -1:
+                pygame.display.set_caption(CAPTION + ' [Computing...]')
+                new_board = ai.next_move(board)
+                pygame.display.set_caption(CAPTION)
+                if new_board is not None:
+                    board = new_board
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_click_position = event.pos
 
@@ -53,12 +61,6 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
                 if new_board is not None:
                     board = new_board
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    new_board = ai.next_move(board)
-                    if new_board is not None:
-                        board = new_board
-
         draw_board(screen, 0, 0, grid_size, board)
         pygame.display.flip()
 
@@ -66,7 +68,8 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
 pygame.init()
 
 screen: Surface = pygame.display.set_mode([512, 512])
-ai = AI(PositionEvaluation(), search_depth=2)
+pygame.display.set_caption(CAPTION)
+ai = AI(PositionEvaluation(), search_depth=3)
 
 game_loop(screen, BoardState.initial_state(), ai)
 
