@@ -3,12 +3,13 @@ from itertools import product
 import pygame
 from pygame import Surface
 import time
+import pickle
 
 from src.ai import AI, PositionEvaluation
 from src.boardstate import BoardState
 
 CAPTION = 'Draughts'
-MOVE_TIME = 1.0
+MOVE_TIME = 0.2
 
 
 def draw_board(screen: Surface, pos_x: int, pos_y: int, elem_size: int, board: BoardState):
@@ -46,6 +47,13 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
             if event.type == pygame.QUIT:
                 return
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    with open('save', 'wb') as f:
+                        f.write(pickle.dumps(board))
+                if event.key == pygame.K_l:
+                    with open('save', 'rb') as f:
+                        board = pickle.loads(f.read())
             if board.ended():
                 continue
 
@@ -81,7 +89,7 @@ pygame.init()
 
 screen: Surface = pygame.display.set_mode([512, 512])
 pygame.display.set_caption(CAPTION)
-ai = AI(PositionEvaluation(), search_depth=6)
+ai = AI(PositionEvaluation(), search_depth=4)
 
 game_loop(screen, BoardState.initial_state(), ai)
 
