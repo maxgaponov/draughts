@@ -2,11 +2,14 @@ from itertools import product
 
 import pygame
 from pygame import Surface
+import time
 
 from src.ai import AI, PositionEvaluation
 from src.boardstate import BoardState
 
 CAPTION = 'Draughts'
+MOVE_TIME = 1.0
+
 
 def draw_board(screen: Surface, pos_x: int, pos_y: int, elem_size: int, board: BoardState):
     dark = (0, 0, 0)
@@ -43,9 +46,18 @@ def game_loop(screen: Surface, board: BoardState, ai: AI):
             if event.type == pygame.QUIT:
                 return
 
+            if board.ended():
+                continue
+
             if board.current_player == -1:
                 pygame.display.set_caption(CAPTION + ' [Computing...]')
+                start_time = time.time()
                 new_board = ai.next_move(board)
+                finish_time = time.time()
+                elp_time = finish_time - start_time
+                sleep_time = MOVE_TIME - elp_time
+                if sleep_time > 0:
+                    time.sleep(sleep_time)
                 pygame.display.set_caption(CAPTION)
                 if new_board is not None:
                     board = new_board
@@ -69,7 +81,7 @@ pygame.init()
 
 screen: Surface = pygame.display.set_mode([512, 512])
 pygame.display.set_caption(CAPTION)
-ai = AI(PositionEvaluation(), search_depth=3)
+ai = AI(PositionEvaluation(), search_depth=6)
 
 game_loop(screen, BoardState.initial_state(), ai)
 
