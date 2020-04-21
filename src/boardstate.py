@@ -1,17 +1,18 @@
 import numpy as np
 from typing import Optional
+import copy
 
 
 class BoardState:
-    def __init__(self, board: np.ndarray, current_player: int = 1):
-        self.board: np.ndarray = board
-        self.current_player: int = current_player
+    def __init__(self):
+        self.board = np.zeros((8, 8), dtype=int)
+        self.current_player = 1
         self.last_move = (-1, -1)
         self.last_move_cont = False
         self.is_last_capt = False
 
     def copy(self) -> 'BoardState':
-        return BoardState(self.board.copy(), self.current_player)
+        return copy.deepcopy(self)
 
     def do_move(self, from_x, from_y, to_x, to_y) -> Optional['BoardState']:
         """
@@ -104,14 +105,14 @@ class BoardState:
 
     @staticmethod
     def initial_state() -> 'BoardState':
-        board = np.zeros(shape=(8, 8), dtype=np.int8)
+        board = BoardState()
 
         for i in range(8):
             for j in range(8):
                 if (i + j) % 2:  # black cell
                     if i >= 5:  # first player
-                        board[i, j] = 1
+                        board.board[i, j] = 1
                     elif i < 3:  # second player
-                        board[i, j] = -1
+                        board.board[i, j] = -1
 
-        return BoardState(board, 1)
+        return board

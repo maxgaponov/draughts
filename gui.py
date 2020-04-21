@@ -5,7 +5,7 @@ from pygame import Surface
 import time
 import pickle
 
-from src.ai import AI
+from src.ai import AI, PositionEvaluation
 from src.boardstate import BoardState
 
 CAPTION = 'Draughts'
@@ -89,7 +89,7 @@ pygame.init()
 
 screen: Surface = pygame.display.set_mode([512, 512])
 pygame.display.set_caption(CAPTION)
-ai = AI()
+ai = AI(PositionEvaluation(), search_depth=4)
 
 game_loop(screen, BoardState.initial_state(), ai)
 

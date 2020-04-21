@@ -13,7 +13,7 @@ class PositionEvaluation:
 
 
 class AI:
-    def __init__(self, position_evaluation: PositionEvaluation = PositionEvaluation(), search_depth: int = 4):
+    def __init__(self, position_evaluation: PositionEvaluation, search_depth: int):
         self.position_evaluation: PositionEvaluation = position_evaluation
         self.search_depth: int = search_depth
 
