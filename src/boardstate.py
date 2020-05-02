@@ -50,17 +50,9 @@ class BoardState:
         if not self.is_empty_cell(to_x, to_y):
             return
         move = (from_x, from_y, to_x, to_y)
-        enemy_cnt = 0
-        enemy_x = -1
-        enemy_y = -1
-        for i in range(1, move_len):
-            cur_x = from_x + i * dir_x
-            cur_y = from_y + i * dir_y
-            if self.is_enemy_cell(cur_x, cur_y):
-                enemy_cnt += 1
-                enemy_x = cur_x
-                enemy_y = cur_y
-        if enemy_cnt > 1:
+        (player_cnt, enemy_cnt) = self.get_piece_cnt(from_x, from_y, dir_x, dir_y, move_len)
+        (enemy_x, enemy_y) = self.get_enemy_crd(from_x, from_y, dir_x, dir_y, move_len)
+        if enemy_cnt > 1 or player_cnt > 0:
             return
         if not self.is_king(from_x, from_y) and enemy_cnt == 0 and move_len == 2:
             return
@@ -89,6 +81,28 @@ class BoardState:
     def is_empty_cell(self, x, y):
         return 0 <= x < 8 and 0 <= y < 8 and self.board[y, x] == 0
 
+    def get_piece_cnt(self, from_x, from_y, dir_x, dir_y, move_len):
+        enemy_cnt = 0
+        player_cnt = 0
+        for i in range(1, move_len):
+            cur_x = from_x + i * dir_x
+            cur_y = from_y + i * dir_y
+            if self.is_enemy_cell(cur_x, cur_y):
+                enemy_cnt += 1
+                enemy_x = cur_x
+                enemy_y = cur_y
+            elif i > 0 and self.is_player_cell(cur_x, cur_y):
+                player_cnt += 1
+        return (player_cnt, enemy_cnt)
+
+    def get_enemy_crd(self, from_x, from_y, dir_x, dir_y, move_len):
+        for i in range(1, move_len):
+            cur_x = from_x + i * dir_x
+            cur_y = from_y + i * dir_y
+            if self.is_enemy_cell(cur_x, cur_y):
+                return (cur_x, cur_y)
+        return (-1, -1)
+
     def get_current_player_cells(self):
         cells = []
         for x in range(8):
@@ -99,6 +113,9 @@ class BoardState:
 
     def is_enemy_cell(self, x, y):
         return self.board[y, x] * self.current_player < 0
+
+    def is_player_cell(self, x, y):
+        return self.board[y, x] * self.current_player > 0
 
     def is_king(self, x, y):
         return abs(self.board[y, x]) == 2
