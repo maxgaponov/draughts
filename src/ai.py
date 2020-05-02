@@ -1,3 +1,4 @@
+import numpy as np
 from typing import Optional
 
 from .boardstate import BoardState
@@ -5,11 +6,7 @@ from .boardstate import BoardState
 
 class PositionEvaluation:
     def __call__(self, board: BoardState) -> float:
-        score = 0
-        for i in range(8):
-            for j in range(8):
-                score += (board.board[i, j] * board.current_player) ** 3
-        return score
+        return np.sum((board.board * board.current_player) ** 3)
 
 
 class AI:
